@@ -1,14 +1,16 @@
 package commands
 
 import (
+	"context"
 	"fmt"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"strings"
+
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 type Transaction struct{}
 
-func (Transaction) Run(msg *tgbotapi.Message) (tgbotapi.MessageConfig, error) {
+func (Transaction) Run(ctx context.Context, msg *tgbotapi.Message) (tgbotapi.MessageConfig, error) {
 	text := strings.Builder{}
 
 	text.WriteString(fmt.Sprintf("User ID:%d\nUser Name:%s\n", msg.From.ID, msg.From.UserName))

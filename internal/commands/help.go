@@ -1,14 +1,16 @@
 package commands
 
 import (
+	"context"
 	"fmt"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"strings"
+
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 type Help struct{}
 
-func (h Help) Run(msg *tgbotapi.Message) (tgbotapi.MessageConfig, error) {
+func (h Help) Run(ctx context.Context, msg *tgbotapi.Message) (tgbotapi.MessageConfig, error) {
 	text := strings.Builder{}
 
 	if msg.CommandArguments() != "" {

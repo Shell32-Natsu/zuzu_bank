@@ -1,6 +1,7 @@
 package bot
 
 import (
+	"context"
 	"fmt"
 	"unicode/utf16"
 
@@ -13,7 +14,7 @@ func utf16Length(s string) int {
 	return len(utf16.Encode([]rune(s)))
 }
 
-func ParseMessage(msg *tgbotapi.Message) (tgbotapi.Chattable, error) {
+func ParseMessage(ctx context.Context, msg *tgbotapi.Message) (tgbotapi.Chattable, error) {
 	if !config.IsAllowedUser(msg.From.ID) {
 		return tgbotapi.NewMessage(msg.Chat.ID, fmt.Sprintf("User id %d is not allowed.", msg.From.ID)), nil
 	}
@@ -23,7 +24,7 @@ func ParseMessage(msg *tgbotapi.Message) (tgbotapi.Chattable, error) {
 		return nil, nil
 	}
 
-	resp, err := commands.RunCommand(msg)
+	resp, err := commands.RunCommand(ctx, msg)
 	if err != nil {
 		return nil, fmt.Errorf("failed to run command: %s", err)
 	}

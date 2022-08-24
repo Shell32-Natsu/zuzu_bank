@@ -32,7 +32,7 @@ func main() {
 	}
 
 	// Start bot. This function is not expected to return.
-	if err := bot.Start(); err != nil {
+	if err := bot.Start(context.Background()); err != nil {
 		log.Panic(err)
 	}
 }

@@ -1,7 +1,9 @@
 package commands
 
 import (
+	"context"
 	"fmt"
+
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
@@ -14,14 +16,14 @@ var commandMap = map[string]BotCommand{
 }
 
 type BotCommand interface {
-	Run(msg *tgbotapi.Message) (tgbotapi.MessageConfig, error)
+	Run(ctx context.Context, msg *tgbotapi.Message) (tgbotapi.MessageConfig, error)
 	Help() string
 }
 
-func RunCommand(msg *tgbotapi.Message) (tgbotapi.MessageConfig, error) {
+func RunCommand(ctx context.Context, msg *tgbotapi.Message) (tgbotapi.MessageConfig, error) {
 	for c, h := range commandMap {
 		if c == msg.Command() {
-			return h.Run(msg)
+			return h.Run(ctx, msg)
 		}
 	}
 	// Unknown command

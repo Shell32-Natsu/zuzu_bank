@@ -27,10 +27,29 @@ func Init(ctx context.Context) error {
 	}
 	log.Printf("connected to database")
 
-	indexOpt := options.Index().SetUnique(true)
+	if err := checkAndCreateUniqueIndex(ctx); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func checkAndCreateUniqueIndex(ctx context.Context) error {
+	const expectedIndexName = "user_id_1"
+	indexSpecs, err := balanceCollection().Indexes().ListSpecifications(ctx, options.ListIndexes())
+	if err != nil {
+		return fmt.Errorf("failed to list index specifications: %s", err)
+	}
+	for _, is := range indexSpecs {
+		if expectedIndexName == is.Name {
+			log.Printf("index %q has existed", is.Name)
+			return nil
+		}
+	}
+
 	indexName, err := balanceCollection().Indexes().CreateOne(ctx, mongo.IndexModel{
-		Keys:    bson.D{{"user_id", 1}},
-		Options: indexOpt,
+		Keys:    bson.D{{Key: "user_id", Value: 1}},
+		Options: options.Index().SetUnique(true),
 	})
 	if err != nil {
 		return fmt.Errorf("failed to create unique index: %s", err)
