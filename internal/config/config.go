@@ -10,10 +10,11 @@ import (
 )
 
 type Config struct {
-	BotKey       string
-	AdminUsers   []string
-	AllowedUsers []string
-	Debug        bool
+	BotKey                string
+	AdminUsers            []string
+	AllowedUsers          []string
+	Debug                 bool
+	MongoConnectionString string
 }
 
 func (c *Config) String() string {
@@ -21,6 +22,7 @@ func (c *Config) String() string {
 	builder.WriteString(fmt.Sprintf("BotKey: %s\n", c.BotKey))
 	builder.WriteString(fmt.Sprintf("AdminUsers: %s\n", c.AdminUsers))
 	builder.WriteString(fmt.Sprintf("AllowedUsers: %s\n", c.AllowedUsers))
+	builder.WriteString(fmt.Sprintf("MongoConnectionString: %s\n", c.MongoConnectionString))
 	return builder.String()
 }
 
@@ -56,6 +58,10 @@ func IsDebug() bool {
 
 func BotKey() string {
 	return config.BotKey
+}
+
+func MongoDBConnectionString() string {
+	return config.MongoConnectionString
 }
 
 func InitConfig(p string) error {
