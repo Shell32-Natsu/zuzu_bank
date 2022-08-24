@@ -17,17 +17,15 @@ func main() {
 	if *configPath == "" {
 		log.Panicln("must provide config file.")
 	}
-	c, err := config.NewConfig(*configPath)
+	err := config.InitConfig(*configPath)
 	if err != nil {
 		log.Panic(err)
 	}
 
-	if *debug {
-		c.Debug = true
-	}
+	config.SetDebug(*debug)
 
 	// Start bot. This function is not expected to return.
-	if err := bot.Start(c); err != nil {
+	if err := bot.Start(); err != nil {
 		log.Panic(err)
 	}
 }

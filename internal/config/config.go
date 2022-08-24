@@ -16,26 +16,6 @@ type Config struct {
 	Debug        bool
 }
 
-func (c *Config) IsAdmin(u int64) bool {
-	us := strconv.FormatInt(u, 10)
-	for _, admin := range c.AdminUsers {
-		if admin == us {
-			return true
-		}
-	}
-	return false
-}
-
-func (c *Config) IsAllowedUser(u int64) bool {
-	us := strconv.FormatInt(u, 10)
-	for _, au := range c.AllowedUsers {
-		if au == us {
-			return true
-		}
-	}
-	return false
-}
-
 func (c *Config) String() string {
 	builder := strings.Builder{}
 	builder.WriteString(fmt.Sprintf("BotKey: %s\n", c.BotKey))
@@ -44,17 +24,50 @@ func (c *Config) String() string {
 	return builder.String()
 }
 
-func NewConfig(p string) (*Config, error) {
+var config Config
+
+func IsAdmin(u int64) bool {
+	us := strconv.FormatInt(u, 10)
+	for _, admin := range config.AdminUsers {
+		if admin == us {
+			return true
+		}
+	}
+	return false
+}
+
+func IsAllowedUser(u int64) bool {
+	us := strconv.FormatInt(u, 10)
+	for _, au := range config.AllowedUsers {
+		if au == us {
+			return true
+		}
+	}
+	return false
+}
+
+func SetDebug(d bool) {
+	config.Debug = d
+}
+
+func IsDebug() bool {
+	return config.Debug
+}
+
+func BotKey() string {
+	return config.BotKey
+}
+
+func InitConfig(p string) error {
 	b, err := os.ReadFile(p)
 	if err != nil {
-		return nil, fmt.Errorf("failed to open config file %s: %s", p, err)
+		return fmt.Errorf("failed to open config file %s: %s", p, err)
 	}
 
 	log.Printf("config file:\n%s", string(b))
 
-	var c Config
-	json.Unmarshal(b, &c)
+	json.Unmarshal(b, &config)
 
-	log.Printf("parsed config:\n%s", c.String())
-	return &c, nil
+	log.Printf("parsed config:\n%s", config.String())
+	return nil
 }

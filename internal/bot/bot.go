@@ -8,13 +8,13 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-func Start(c *config.Config) error {
-	bot, err := tgbotapi.NewBotAPI(c.BotKey)
+func Start() error {
+	bot, err := tgbotapi.NewBotAPI(config.BotKey())
 	if err != nil {
 		return fmt.Errorf("failed to get new bot: %s", err)
 	}
 
-	bot.Debug = c.Debug
+	bot.Debug = config.IsDebug()
 
 	log.Printf("Authorized on account %s", bot.Self.UserName)
 
@@ -27,9 +27,9 @@ func Start(c *config.Config) error {
 		if update.Message != nil { // If we got a message
 			log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
 
-			resp, err := ParseMessage(c, update.Message)
+			resp, err := ParseMessage(update.Message)
 			if err != nil {
-				if c.IsAdmin(update.Message.From.ID) {
+				if config.IsAdmin(update.Message.From.ID) {
 					_, newErr := bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, err.Error()))
 					if newErr != nil {
 						log.Panicf("original error:\n%s\nnew error:\n%s\n", err, newErr)

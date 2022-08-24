@@ -13,8 +13,8 @@ func utf16Length(s string) int {
 	return len(utf16.Encode([]rune(s)))
 }
 
-func ParseMessage(c *config.Config, msg *tgbotapi.Message) (tgbotapi.Chattable, error) {
-	if !c.IsAllowedUser(msg.From.ID) {
+func ParseMessage(msg *tgbotapi.Message) (tgbotapi.Chattable, error) {
+	if !config.IsAllowedUser(msg.From.ID) {
 		return tgbotapi.NewMessage(msg.Chat.ID, fmt.Sprintf("User id %d is not allowed.", msg.From.ID)), nil
 	}
 
