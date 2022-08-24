@@ -10,14 +10,21 @@ type Help struct{}
 
 func (h Help) Run(msg *tgbotapi.Message) (tgbotapi.MessageConfig, error) {
 	text := strings.Builder{}
-	for c, h := range commandMap {
-		text.WriteString(fmt.Sprintf("/%s - %s\n", c, h.Help()))
-	}
-	resp := tgbotapi.NewMessage(msg.Chat.ID, text.String())
 
-	return resp, nil
+	if msg.CommandArguments() != "" {
+		for c, h := range commandMap {
+			if c == strings.TrimSpace(msg.CommandArguments()) {
+				return tgbotapi.NewMessage(msg.Chat.ID, h.Help()), nil
+			}
+		}
+	}
+
+	for c, h := range commandMap {
+		text.WriteString(fmt.Sprintf("/%s - %s\n", c, strings.Split(h.Help(), "\n")[0]))
+	}
+	return tgbotapi.NewMessage(msg.Chat.ID, text.String()), nil
 }
 
 func (h Help) Help() string {
-	return "Show the helps for all commands"
+	return "显示帮助信息"
 }

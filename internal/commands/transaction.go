@@ -6,9 +6,9 @@ import (
 	"strings"
 )
 
-type Balance struct{}
+type Transaction struct{}
 
-func (Balance) Run(msg *tgbotapi.Message) (tgbotapi.MessageConfig, error) {
+func (Transaction) Run(msg *tgbotapi.Message) (tgbotapi.MessageConfig, error) {
 	text := strings.Builder{}
 
 	text.WriteString(fmt.Sprintf("User ID:%d\nUser Name:%s\n", msg.From.ID, msg.From.UserName))
@@ -16,6 +16,6 @@ func (Balance) Run(msg *tgbotapi.Message) (tgbotapi.MessageConfig, error) {
 	return resp, nil
 }
 
-func (Balance) Help() string {
-	return "当前的猪猪币余额"
+func (Transaction) Help() string {
+	return "交易记录\n\n命令格式：/transaction 开始时间 结束时间\n\n默认为到当天为止的30天"
 }

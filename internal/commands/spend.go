@@ -6,9 +6,9 @@ import (
 	"strings"
 )
 
-type Balance struct{}
+type Spend struct{}
 
-func (Balance) Run(msg *tgbotapi.Message) (tgbotapi.MessageConfig, error) {
+func (Spend) Run(msg *tgbotapi.Message) (tgbotapi.MessageConfig, error) {
 	text := strings.Builder{}
 
 	text.WriteString(fmt.Sprintf("User ID:%d\nUser Name:%s\n", msg.From.ID, msg.From.UserName))
@@ -16,6 +16,6 @@ func (Balance) Run(msg *tgbotapi.Message) (tgbotapi.MessageConfig, error) {
 	return resp, nil
 }
 
-func (Balance) Help() string {
-	return "当前的猪猪币余额"
+func (Spend) Help() string {
+	return "花猪猪币"
 }

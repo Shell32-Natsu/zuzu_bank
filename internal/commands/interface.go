@@ -6,8 +6,11 @@ import (
 )
 
 var commandMap = map[string]BotCommand{
-	"help":    Help{},
-	"balance": Balance{},
+	"help":        Help{},
+	"balance":     Balance{},
+	"deposit":     Deposit{},
+	"spend":       Spend{},
+	"transaction": Transaction{},
 }
 
 type BotCommand interface {
@@ -22,5 +25,5 @@ func RunCommand(msg *tgbotapi.Message) (tgbotapi.MessageConfig, error) {
 		}
 	}
 	// Unknown command
-	return tgbotapi.NewMessage(msg.Chat.ID, fmt.Sprintf("Unkown command: %s", msg.Command())), nil
+	return tgbotapi.NewMessage(msg.Chat.ID, fmt.Sprintf("命令不存在: %s", msg.Command())), nil
 }
