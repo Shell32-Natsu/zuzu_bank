@@ -21,3 +21,7 @@ func (Spend) Run(ctx context.Context, msg *tgbotapi.Message) (tgbotapi.MessageCo
 func (Spend) Help() string {
 	return "花猪猪币"
 }
+
+func (Spend) QueryUserId(msg *tgbotapi.Message) int64 {
+	return 0
+}

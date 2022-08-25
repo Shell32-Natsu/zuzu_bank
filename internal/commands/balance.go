@@ -3,41 +3,34 @@ package commands
 import (
 	"context"
 	"fmt"
-	"strconv"
+	"github.com/Shell32-Natsu/zuzu_bank/internal/logging"
 	"strings"
 
-	"github.com/Shell32-Natsu/zuzu_bank/internal/config"
 	"github.com/Shell32-Natsu/zuzu_bank/internal/db"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 type Balance struct{}
 
-func (Balance) Run(ctx context.Context, msg *tgbotapi.Message) (tgbotapi.MessageConfig, error) {
-	text := strings.Builder{}
+func (b Balance) Run(ctx context.Context, msg *tgbotapi.Message) (tgbotapi.MessageConfig, error) {
+	text := &strings.Builder{}
 
-	text.WriteString(fmt.Sprintf("User ID:%d\nUser Name:%s\n", msg.From.ID, msg.From.UserName))
-
-	queryId := msg.From.ID
-	args := msg.CommandArguments()
-	if args != "" {
-		if !config.IsAdmin(msg.From.ID) {
-			text.WriteString("只有银行员工可以查询其他账户")
-			return tgbotapi.NewMessage(msg.Chat.ID, text.String()), nil
-		} else {
-			id, err := strconv.ParseInt(args, 10, 0)
-			if err != nil {
-				return tgbotapi.MessageConfig{}, err
-			}
-			queryId = id
-		}
+	queryId := b.QueryUserId(msg)
+	if queryId < 0 {
+		return tgbotapi.MessageConfig{}, fmt.Errorf("invalid user id")
 	}
+	logging.LogDebugf("user id to query: %d", queryId)
 
-	b, err := queryBalance(ctx, queryId)
+	balance, err := queryBalance(ctx, queryId)
 	if err != nil {
 		return tgbotapi.MessageConfig{}, fmt.Errorf("failed to query balance: %s", err)
 	}
-	text.WriteString(fmt.Sprintf("当前余额：%d\n", b))
+	writeStringf(text, "User ID:%d\n", queryId)
+	if queryId == msg.From.ID {
+		// Query is for user self
+		writeStringf(text, "User name: %s\n", msg.From.UserName)
+	}
+	writeStringf(text, "当前余额：%d\n", balance)
 
 	resp := tgbotapi.NewMessage(msg.Chat.ID, text.String())
 	return resp, nil
@@ -49,4 +42,9 @@ func queryBalance(ctx context.Context, id int64) (int64, error) {
 
 func (Balance) Help() string {
 	return "用户的猪猪币余额\n\n用法：/balance [user_id]\n\n如果不提供user_id则查询当前用户，只有银行员工可以查询其他用户"
+}
+
+func (Balance) QueryUserId(msg *tgbotapi.Message) int64 {
+	const userIdPos = 0
+	return getQueryUserIdFromCommandArgs(msg.From.ID, msg.CommandArguments(), userIdPos)
 }

@@ -3,9 +3,9 @@ package db
 import (
 	"context"
 	"fmt"
-	"go.mongodb.org/mongo-driver/mongo"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 func Balance(ctx context.Context, id int64) (int64, error) {

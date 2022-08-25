@@ -10,7 +10,7 @@ import (
 
 type Help struct{}
 
-func (h Help) Run(ctx context.Context, msg *tgbotapi.Message) (tgbotapi.MessageConfig, error) {
+func (Help) Run(ctx context.Context, msg *tgbotapi.Message) (tgbotapi.MessageConfig, error) {
 	text := strings.Builder{}
 
 	if msg.CommandArguments() != "" {
@@ -27,6 +27,10 @@ func (h Help) Run(ctx context.Context, msg *tgbotapi.Message) (tgbotapi.MessageC
 	return tgbotapi.NewMessage(msg.Chat.ID, text.String()), nil
 }
 
-func (h Help) Help() string {
+func (Help) Help() string {
 	return "显示帮助信息"
+}
+
+func (Help) QueryUserId(msg *tgbotapi.Message) int64 {
+	return 0
 }

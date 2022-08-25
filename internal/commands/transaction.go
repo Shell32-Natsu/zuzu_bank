@@ -21,3 +21,7 @@ func (Transaction) Run(ctx context.Context, msg *tgbotapi.Message) (tgbotapi.Mes
 func (Transaction) Help() string {
 	return "交易记录\n\n命令格式：/transaction 开始时间 结束时间\n\n默认为到当天为止的30天"
 }
+
+func (Transaction) QueryUserId(msg *tgbotapi.Message) int64 {
+	return 0
+}
